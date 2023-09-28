@@ -128,15 +128,52 @@ class Rushx:
 
     def list_configurations(self):
         # Implement listing configurations
-        print("List configurations here")
+        config = configparser.ConfigParser()
+        if os.path.exists(self.config_file):
+            config.read(self.config_file)
+            print("Configurations:")
+            for section_name in config.sections():
+                print(f"Section: {section_name}")
+                for key, value in config[section_name].items():
+                    print(f"{key}: {value}")
 
     def remove_configuration(self, name):
         # Implement removing configurations
-        print("Remove configurations here")
+        config = configparser.ConfigParser()
+        if os.path.exists(self.config_file):
+            config.read(self.config_file)
+            if "rushx" in config and name in config["rushx"]:
+                del config["rushx"][name]
+                with open(self.config_file, "w") as configfile:
+                    config.write(configfile)
+                print(f"Configuration '{name}' removed.")
+            else:
+                print(f"Configuration '{name}' not found.")
 
     def check_required_packages(self):
         # Implement checking required packages
-        print("Check required packages here")
+        try:
+            # Check if required packages are installed
+            required_packages = ["package1", "package2"]  # Replace with actual package names
+            missing_packages = []
+
+            for package in required_packages:
+                subprocess.check_output(["pip", "show", package])
+            print("All required packages are installed.")
+
+        except subprocess.CalledProcessError:
+            print("Some required packages are missing. Installing...")
+
+            for package in required_packages:
+                try:
+                    subprocess.check_output(["pip", "install", package])
+                except subprocess.CalledProcessError:
+                    missing_packages.append(package)
+
+            if missing_packages:
+                print(f"Failed to install the following packages: {', '.join(missing_packages)}")
+            else:
+                print("All required packages are now installed.")
 
     def get_system_info(self):
         # Implement getting system information
