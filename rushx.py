@@ -1,8 +1,6 @@
 import argparse
 import configparser
 import os
-import logging
-import getpass
 import socket
 import requests
 
@@ -11,6 +9,9 @@ class Rushx:
         # Initialize argument parser
         self.parser = argparse.ArgumentParser(description="rushx - A tool for various terminal tasks.")
         self.parser.add_argument("command", help="The command to execute", choices=["send", "info", "scan", "config", "list", "remove", "edit"])
+        self.parser.add_argument("--content", help="Message content for 'send' command")
+        self.parser.add_argument("--ip", help="IP address for 'info' and 'scan' commands")
+        self.parser.add_argument("--url", help="Webhook URL for 'config' and 'edit' commands")
         self.args = self.parser.parse_args()
 
         # Load configuration
@@ -104,9 +105,9 @@ class Rushx:
 
     def list_configurations(self):
         if self.webhook_url:
-            print("Webhook URL: Configured")
+            print(f"Webhook URL: {self.webhook_url}")
         else:
-            print("Webhook URL: Not configured")
+            print("Webhook URL is not configured.")
 
     def remove_configuration(self, name):
         if name.lower() == "webhook_url":
