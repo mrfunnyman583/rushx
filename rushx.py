@@ -14,7 +14,7 @@ class Rushx:
         self.parser.add_argument(
             "command",
             help="The command to execute",
-            choices=["send", "info", "scan", "config", "list", "remove", "edit", "packages", "system_info"]
+            choices=["send", "info", "scan", "config", "list", "remove", "edit", "packages", "system_info", "test"]
         )
         self.parser.add_argument("--content", help="Message content for 'send' command")
         self.parser.add_argument("--ip", help="IP address for 'info' and 'scan' commands")
@@ -58,6 +58,8 @@ class Rushx:
             self.check_required_packages()
         elif self.args.command == "system_info":
             self.get_system_info()
+        elif self.args.command == "test":
+            self.send_test_message()
         else:
             print("Invalid command. Use 'help' to see available commands.")
 
@@ -66,26 +68,20 @@ class Rushx:
             headers = {"Content-Type": "application/json"}
             payload = {"content": message_content}
 
-            # Debug: Print the message content
-            print("Message Content:")
-            print(message_content)
-
             response = requests.post(self.webhook_url, headers=headers, json=payload)
 
-            if response.status_code == 200:
+            if response.status_code == 204:
                 print("Message sent to Discord successfully.")
+                print("(Note: error 204's can be false-positive)")
             else:
                 print(f"Failed to send message to Discord. Status code: {response.status_code}")
         else:
             print("Discord webhook URL is not configured. Use 'config' command to set it.")
 
     def get_ip_info(self, ip_address):
-        # Fetch IP info from ipinfo.io
-        ip_info_url = f"https://ipinfo.io/{ip_address}/json"
-        response = requests.get(ip_info_url)
-
+        response = requests.get(f"https://ipinfo.io/{ip_address}/json")
         if response.status_code == 200:
-            ip_info = response.json()
+            ip_info = json.loads(response.text)
             print(f"IP Information for {ip_address}:")
             for key, value in ip_info.items():
                 print(f"{key}: {value}")
@@ -93,41 +89,27 @@ class Rushx:
             print(f"Failed to fetch IP information for {ip_address}. Status code: {response.status_code}")
 
     def scan_ip(self, ip_address):
-        # Implement scanning IP functionality
         try:
-            # Example: Ping the IP address
-            response = subprocess.check_output(["ping", "-c", "4", ip_address])
-            scan_result = response.decode('utf-8')
-
-            # Send scan result to webhook
-            if self.webhook_url:
-                headers = {"Content-Type": "application/json"}
-                payload = {
-                    "content": f"Scan result for {ip_address}:\n```{scan_result}```"
-                }
-                response = requests.post(self.webhook_url, headers=headers, json=payload)
-
-                if response.status_code == 200:
-                    print("Scan result sent to Discord successfully.")
-                else:
-                    print(f"Failed to send scan result to Discord. Status code: {response.status_code}")
-            else:
-                print("Discord webhook URL is not configured. Use 'config' command to set it.")
-
+            result = subprocess.check_output(["nmap", "-F", ip_address])
+            print(result.decode("utf-8"))
         except subprocess.CalledProcessError:
-            print(f"Unable to scan {ip_address}. Check the IP address or scanning tool.")
+            print("Failed to scan IP address.")
 
     def edit_webhook_url(self, url):
-        # Configure the Discord webhook URL
         config = configparser.ConfigParser()
-        config["rushx"] = {"webhook_url": url}
-
-        with open(self.config_file, "w") as configfile:
-            config.write(configfile)
-        print(f"Discord webhook URL configured: {url}")
+        if os.path.exists(self.config_file):
+            config.read(self.config_file)
+            if "rushx" in config:
+                config["rushx"]["webhook_url"] = url
+                with open(self.config_file, "w") as configfile:
+                    config.write(configfile)
+                print("Webhook URL updated.")
+            else:
+                print("Configuration section 'rushx' not found.")
+        else:
+            print("Config file does not exist. Create a configuration using 'config' command.")
 
     def list_configurations(self):
-        # Implement listing configurations
         config = configparser.ConfigParser()
         if os.path.exists(self.config_file):
             config.read(self.config_file)
@@ -138,7 +120,6 @@ class Rushx:
                     print(f"{key}: {value}")
 
     def remove_configuration(self, name):
-        # Implement removing configurations
         config = configparser.ConfigParser()
         if os.path.exists(self.config_file):
             config.read(self.config_file)
@@ -151,10 +132,8 @@ class Rushx:
                 print(f"Configuration '{name}' not found.")
 
     def check_required_packages(self):
-        # Implement checking required packages
         try:
-            # Check if required packages are installed
-            required_packages = ["package1", "package2"]  # Replace with actual package names
+            required_packages = ["nmap", "requests"]
             missing_packages = []
 
             for package in required_packages:
@@ -176,7 +155,6 @@ class Rushx:
                 print("All required packages are now installed.")
 
     def get_system_info(self):
-        # Implement getting system information
         system_info = {
             "System": platform.system(),
             "Node Name": platform.node(),
@@ -189,6 +167,13 @@ class Rushx:
         print("System Information:")
         for key, value in system_info.items():
             print(f"{key}: {value}")
+
+    def send_test_message(self):
+        if self.webhook_url:
+            test_message = "This is a test message from Rushx."
+            self.send_message_content(test_message)
+        else:
+            print("Discord webhook URL is not configured. Use 'config' command to set it.")
 
     def run(self):
         self.execute_command()
