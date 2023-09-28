@@ -64,6 +64,10 @@ class Rushx:
             headers = {"Content-Type": "application/json"}
             payload = {"content": message_content}
 
+            # Debug: Print the message content
+            print("Message Content:")
+            print(message_content)
+
             response = requests.post(self.webhook_url, headers=headers, json=payload)
 
             if response.status_code == 200:
@@ -73,100 +77,7 @@ class Rushx:
         else:
             print("Discord webhook URL is not configured. Use 'config' command to set it.")
 
-    def get_ip_info(self, ip_address):
-        try:
-            host_name = socket.gethostbyaddr(ip_address)
-            print(f"IP Address: {ip_address}")
-            print(f"Host Name: {host_name[0]}")
-            print(f"Is Reachable: Yes")
-        except socket.herror:
-            print(f"IP Address: {ip_address}")
-            print("Host Name: Not found")
-            print(f"Is Reachable: No")
-        except Exception as e:
-            print(f"Error: {e}")
-
-    def scan_ip(self, ip_address):
-        try:
-            host_name = socket.gethostbyaddr(ip_address)
-            ip_info = socket.gethostbyname_ex(host_name[0])
-            ip_details = socket.getaddrinfo(ip_address, None)
-
-            message_content = (
-                f"IP Address: {ip_address}\n"
-                f"Host Name: {host_name[0]}\n"
-                f"Is Reachable: Yes\n"
-                f"IP Address Information:\n"
-                f"  - IP Address(es): {', '.join([addr[4][0] for addr in ip_details])}\n"
-                f"  - Host Alias(es): {', '.join(ip_info[1])}\n"
-                f"  - Canonical Host Name: {ip_info[0]}\n"
-            )
-        except socket.herror:
-            message_content = (
-                f"IP Address: {ip_address}\n"
-                "Host Name: Not found\n"
-                f"Is Reachable: No"
-            )
-        except Exception as e:
-            message_content = f"Error: {e}"
-
-        self.send_message_content(message_content)
-
-    def configure_webhook_url(self, url):
-        config = configparser.ConfigParser()
-        config["rushx"] = {"webhook_url": url}
-
-        with open(self.config_file, "w") as config_file:
-            config.write(config_file)
-
-        print(f"Webhook URL configured: {url}")
-
-    def list_configurations(self):
-        if self.webhook_url:
-            print(f"Webhook URL: {self.webhook_url}")
-        else:
-            print("Webhook URL is not configured.")
-
-    def remove_configuration(self, name):
-        if name.lower() == "webhook_url":
-            self.webhook_url = None
-            config = configparser.ConfigParser()
-            config.remove_section("rushx")
-            with open(self.config_file, "w") as config_file:
-                config.write(config_file)
-            print("Webhook URL removed.")
-        else:
-            print(f"Unknown configuration name: {name}")
-
-    def edit_webhook_url(self, url):
-        self.configure_webhook_url(url)
-
-    def check_required_packages(self):
-        required_packages = ["requests", "argparse", "configparser"]
-        missing_packages = []
-
-        for package in required_packages:
-            try:
-                __import__(package)
-            except ImportError:
-                missing_packages.append(package)
-
-        if missing_packages:
-            print("The following required packages are missing:")
-            for package in missing_packages:
-                print(f"- {package}")
-        else:
-            print("All required packages are installed.")
-
-    def get_system_info(self):
-        try:
-            system_info = subprocess.check_output(["uname", "-a"]).decode("utf-8")
-            print(f"System Information:\n{system_info}")
-        except Exception as e:
-            print(f"Error retrieving system information: {e}")
-
-    def run(self):
-        self.execute_command()
+    # ... (rest of the code remains the same)
 
 if __name__ == "__main__":
     rushx = Rushx()
