@@ -79,6 +79,9 @@ class Rushx:
 
     # ... (rest of the code remains the same)
 
+    def run(self):
+        self.execute_command()
+
 if __name__ == "__main__":
     rushx = Rushx()
     rushx.run()
