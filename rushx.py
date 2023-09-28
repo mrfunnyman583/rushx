@@ -3,7 +3,6 @@ import configparser
 import os
 import socket
 import requests
-import sys
 import subprocess
 
 class Rushx:
@@ -90,10 +89,17 @@ class Rushx:
     def scan_ip(self, ip_address):
         try:
             host_name = socket.gethostbyaddr(ip_address)
+            ip_info = socket.gethostbyname_ex(host_name[0])
+            ip_details = socket.getaddrinfo(ip_address, None)
+
             message_content = (
                 f"IP Address: {ip_address}\n"
                 f"Host Name: {host_name[0]}\n"
-                f"Is Reachable: Yes"
+                f"Is Reachable: Yes\n"
+                f"IP Address Information:\n"
+                f"  - IP Address(es): {', '.join([addr[4][0] for addr in ip_details])}\n"
+                f"  - Host Alias(es): {', '.join(ip_info[1])}\n"
+                f"  - Canonical Host Name: {ip_info[0]}\n"
             )
         except socket.herror:
             message_content = (
