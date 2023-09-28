@@ -4,6 +4,7 @@ import os
 import socket
 import requests
 import subprocess
+import json
 
 class Rushx:
     def __init__(self):
@@ -95,9 +96,34 @@ class Rushx:
         try:
             # Example: Ping the IP address
             response = subprocess.check_output(["ping", "-c", "4", ip_address])
-            print(f"Scan result for {ip_address}:\n{response.decode('utf-8')}")
+            scan_result = response.decode('utf-8')
+
+            # Send scan result to webhook
+            if self.webhook_url:
+                headers = {"Content-Type": "application/json"}
+                payload = {
+                    "content": f"Scan result for {ip_address}:\n```{scan_result}```"
+                }
+                response = requests.post(self.webhook_url, headers=headers, json=payload)
+
+                if response.status_code == 200:
+                    print("Scan result sent to Discord successfully.")
+                else:
+                    print(f"Failed to send scan result to Discord. Status code: {response.status_code}")
+            else:
+                print("Discord webhook URL is not configured. Use 'config' command to set it.")
+
         except subprocess.CalledProcessError:
             print(f"Unable to scan {ip_address}. Check the IP address or scanning tool.")
+
+    def configure_webhook_url(self, url):
+        # Configure the Discord webhook URL
+        config = configparser.ConfigParser()
+        config["rushx"] = {"webhook_url": url}
+
+        with open(self.config_file, "w") as configfile:
+            config.write(configfile)
+        print(f"Discord webhook URL configured: {url}")
 
     # Implement the rest of the commands and features here
 
