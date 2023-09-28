@@ -3,12 +3,18 @@ import configparser
 import os
 import socket
 import requests
+import sys
+import subprocess
 
 class Rushx:
     def __init__(self):
         # Initialize argument parser
         self.parser = argparse.ArgumentParser(description="rushx - A tool for various terminal tasks.")
-        self.parser.add_argument("command", help="The command to execute", choices=["send", "info", "scan", "config", "list", "remove", "edit"])
+        self.parser.add_argument(
+            "command",
+            help="The command to execute",
+            choices=["send", "info", "scan", "config", "list", "remove", "edit", "packages", "system_info"]
+        )
         self.parser.add_argument("--content", help="Message content for 'send' command")
         self.parser.add_argument("--ip", help="IP address for 'info' and 'scan' commands")
         self.parser.add_argument("--url", help="Webhook URL for 'config' and 'edit' commands")
@@ -47,6 +53,12 @@ class Rushx:
         elif self.args.command == "edit":
             url = self.args.url
             self.edit_webhook_url(url)
+        elif self.args.command == "packages":
+            self.check_required_packages()
+        elif self.args.command == "system_info":
+            self.get_system_info()
+        else:
+            print("Invalid command. Use 'help' to see available commands.")
 
     def send_message_content(self, message_content):
         if self.webhook_url:
@@ -122,6 +134,30 @@ class Rushx:
 
     def edit_webhook_url(self, url):
         self.configure_webhook_url(url)
+
+    def check_required_packages(self):
+        required_packages = ["requests", "argparse", "configparser"]
+        missing_packages = []
+
+        for package in required_packages:
+            try:
+                __import__(package)
+            except ImportError:
+                missing_packages.append(package)
+
+        if missing_packages:
+            print("The following required packages are missing:")
+            for package in missing_packages:
+                print(f"- {package}")
+        else:
+            print("All required packages are installed.")
+
+    def get_system_info(self):
+        try:
+            system_info = subprocess.check_output(["uname", "-a"]).decode("utf-8")
+            print(f"System Information:\n{system_info}")
+        except Exception as e:
+            print(f"Error retrieving system information: {e}")
 
     def run(self):
         self.execute_command()
