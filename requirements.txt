@@ -1,0 +1,10 @@
+requests
+json
+socket
+os
+logging
+getpass
+configparser
+argparse
+importlib
+subprocess
