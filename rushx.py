@@ -77,7 +77,29 @@ class Rushx:
         else:
             print("Discord webhook URL is not configured. Use 'config' command to set it.")
 
-    # ... (rest of the code remains the same)
+    def get_ip_info(self, ip_address):
+        # Fetch IP info from ipinfo.io
+        ip_info_url = f"https://ipinfo.io/{ip_address}/json"
+        response = requests.get(ip_info_url)
+
+        if response.status_code == 200:
+            ip_info = response.json()
+            print(f"IP Information for {ip_address}:")
+            for key, value in ip_info.items():
+                print(f"{key}: {value}")
+        else:
+            print(f"Failed to fetch IP information for {ip_address}. Status code: {response.status_code}")
+
+    def scan_ip(self, ip_address):
+        # Implement scanning IP functionality
+        try:
+            # Example: Ping the IP address
+            response = subprocess.check_output(["ping", "-c", "4", ip_address])
+            print(f"Scan result for {ip_address}:\n{response.decode('utf-8')}")
+        except subprocess.CalledProcessError:
+            print(f"Unable to scan {ip_address}. Check the IP address or scanning tool.")
+
+    # Implement the rest of the commands and features here
 
     def run(self):
         self.execute_command()
