@@ -5,6 +5,7 @@ import socket
 import requests
 import subprocess
 import json
+import platform
 
 class Rushx:
     def __init__(self):
@@ -44,7 +45,7 @@ class Rushx:
             self.scan_ip(ip_address)
         elif self.args.command == "config":
             url = self.args.url
-            self.configure_webhook_url(url)
+            self.edit_webhook_url(url)
         elif self.args.command == "list":
             self.list_configurations()
         elif self.args.command == "remove":
@@ -116,7 +117,7 @@ class Rushx:
         except subprocess.CalledProcessError:
             print(f"Unable to scan {ip_address}. Check the IP address or scanning tool.")
 
-    def configure_webhook_url(self, url):
+    def edit_webhook_url(self, url):
         # Configure the Discord webhook URL
         config = configparser.ConfigParser()
         config["rushx"] = {"webhook_url": url}
@@ -125,7 +126,32 @@ class Rushx:
             config.write(configfile)
         print(f"Discord webhook URL configured: {url}")
 
-    # Implement the rest of the commands and features here
+    def list_configurations(self):
+        # Implement listing configurations
+        print("List configurations here")
+
+    def remove_configuration(self, name):
+        # Implement removing configurations
+        print("Remove configurations here")
+
+    def check_required_packages(self):
+        # Implement checking required packages
+        print("Check required packages here")
+
+    def get_system_info(self):
+        # Implement getting system information
+        system_info = {
+            "System": platform.system(),
+            "Node Name": platform.node(),
+            "Release": platform.release(),
+            "Version": platform.version(),
+            "Machine": platform.machine(),
+            "Processor": platform.processor()
+        }
+
+        print("System Information:")
+        for key, value in system_info.items():
+            print(f"{key}: {value}")
 
     def run(self):
         self.execute_command()
