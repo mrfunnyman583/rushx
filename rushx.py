@@ -82,9 +82,10 @@ class Rushx:
         response = requests.get(f"https://ipinfo.io/{ip_address}/json")
         if response.status_code == 200:
             ip_info = json.loads(response.text)
-            print(f"IP Information for {ip_address}:")
+            info_message = f"IP Information for {ip_address}:\n"
             for key, value in ip_info.items():
-                print(f"{key}: {value}")
+                info_message += f"{key}: {value}\n"
+            self.send_message_content(info_message)
         else:
             print(f"Failed to fetch IP information for {ip_address}. Status code: {response.status_code}")
 
