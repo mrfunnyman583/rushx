@@ -11,14 +11,18 @@ Configuration Management: Easily manage Discord webhook URLs and settings.
 Customization: Use command-line options to tailor your experience and automate tasks.
 Usage:
 Get started by running rushx with various commands and options:
+python rushx.py send --content "Your message here"
+python rushx.py info --ip target_ip
+python rushx.py scan --ip target_ip
+python rushx.py config --url "https://your-discord-webhook-url"
+python rushx.py list
+python rushx.py remove --name configuration_name
+python rushx.py edit --url "https://new-discord-webhook-url"
+python rushx.py packages
+python rushx.py system_info
+python rushx.py --help
 
-rushx send for sending test messages.
-rushx info to gather IP address information.
-rushx scan for port scanning.
-rushx config to set up your Discord webhook URL.
-rushx list to view saved configurations.
-rushx remove for removing saved configurations.
-rushx edit to modify your Discord webhook URL.
+
 Contributions and Issues:
 We welcome contributions from the community to enhance and improve rushx. Feel free to open issues for bug reports, feature requests, or contribute through pull requests.
 
