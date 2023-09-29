@@ -161,4 +161,23 @@ class Rushx:
             "Release": platform.release(),
             "Version": platform.version(),
             "Machine": platform.machine(),
-            "Processor":
+            "Processor": platform.processor()
+        }
+
+        print("System Information:")
+        for key, value in system_info.items():
+            print(f"{key}: {value}")
+
+    def send_test_message(self):
+        if self.webhook_url:
+            test_message = "This is a test message from Rushx."
+            self.send_message_content(test_message)
+        else:
+            print("Discord webhook URL is not configured. Use 'config' command to set it.")
+
+    def run(self):
+        self.execute_command()
+
+if __name__ == "__main__":
+    rushx = Rushx()
+    rushx.run()
