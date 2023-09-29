@@ -11,16 +11,16 @@ Configuration Management: Easily manage Discord webhook URLs and settings.
 Customization: Use command-line options to tailor your experience and automate tasks.
 Usage:
 Get started by running rushx with various commands and options:
-python rushx.py send --content "Your message here"
-python rushx.py info --ip target_ip
-python rushx.py scan --ip target_ip
-python rushx.py config --url "https://your-discord-webhook-url"
-python rushx.py list
-python rushx.py remove --name configuration_name
-python rushx.py edit --url "https://new-discord-webhook-url"
-python rushx.py packages
-python rushx.py system_info
-python rushx.py --help
+python3 rushx.py send --content "Your message here"
+python3 rushx.py info --ip target_ip
+python3 rushx.py scan --ip target_ip
+python3 rushx.py config --url "https://your-discord-webhook-url"
+python3 rushx.py list
+python3 rushx.py remove --name configuration_name
+python3 rushx.py edit --url "https://new-discord-webhook-url"
+python3 rushx.py packages
+python3 rushx.py system_info
+python3 rushx.py --help
 
 
 Contributions and Issues:
