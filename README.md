@@ -32,4 +32,4 @@ For detailed usage instructions and examples, please refer to the README.md file
 Thank you for using rushx! We hope it simplifies your Discord webhook and IP-related tasks.
 
 -DISCLAIMER
-This tool is to only be used for testing. I do not condone any illegal activity, i also dont claim any responbility that may get you into legal trouble.
+This tool is to only be used for testing. I do not condone any illegal activity, i also dont claim any responsibility  that may get you into legal trouble.
